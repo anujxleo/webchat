@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Global Chat (Room 123)</title>
+    <title>Global Premium Chat</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-      /* --- PREMIUM CSS (Same as before) --- */
+      /* --- CSS STYLES --- */
       :root {
         --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         --glass-bg: rgba(255, 255, 255, 0.15);
@@ -19,34 +19,40 @@
         background: #1a1a2e;
         background-image: radial-gradient(circle at 10% 20%, rgb(90, 92, 106) 0%, rgb(32, 45, 58) 81.3%);
         height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
+        display: flex; justify-content: center; align-items: center; overflow: hidden;
       }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-      
+
       /* Login Screen */
       #login-screen {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
         z-index: 100; display: flex; justify-content: center; align-items: center;
       }
       .login-box {
         background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
-        width: 90%; max-width: 350px; text-align: center;
+        width: 90%; max-width: 380px; text-align: center;
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        animation: fadeIn 0.5s ease;
       }
+      .login-box h2 { color: #333; margin-bottom: 5px; }
+      .login-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
+      
+      .input-group { text-align: left; margin-bottom: 15px; }
+      .input-group label { font-size: 12px; font-weight: bold; color: #555; margin-left: 5px; }
       .login-box input {
-        width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #eee;
-        border-radius: 12px; background: #f9f9f9; outline: none;
+        width: 100%; padding: 14px; margin-top: 5px; border: 2px solid #ddd;
+        border-radius: 12px; background: #f9f9f9; outline: none; transition: 0.3s;
       }
+      .login-box input:focus { border-color: #764ba2; background: white; }
+      
       .btn {
-        width: 100%; padding: 15px; background: var(--primary-gradient);
+        width: 100%; padding: 14px; background: var(--primary-gradient);
         color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+        margin-top: 10px;
       }
 
-      /* App Container */
+      /* Chat App */
       .app-container {
         width: 100%; max-width: 500px; height: 90vh; background: var(--glass-bg);
         backdrop-filter: blur(16px); border: 1px solid var(--glass-border);
@@ -54,16 +60,18 @@
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
       }
       .header {
-        background: rgba(255, 255, 255, 0.1); padding: 20px;
+        background: rgba(255, 255, 255, 0.1); padding: 15px 20px;
         display: flex; align-items: center; justify-content: space-between;
         border-bottom: 1px solid var(--glass-border); color: white;
       }
-      .logout-btn {
-        background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.3);
-        padding: 5px 15px; border-radius: 20px; color: white; cursor: pointer; font-size: 12px;
+      .header-controls { display: flex; gap: 10px; }
+      .small-btn {
+        background: rgba(0, 0, 0, 0.3); border: none; padding: 6px 12px;
+        border-radius: 20px; color: white; cursor: pointer; font-size: 11px;
       }
+      .notify-active { background: #00c853 !important; }
 
-      /* Chat Window */
+      /* Chat Area */
       .chat-window {
         flex: 1; overflow-y: auto; padding: 20px; display: flex;
         flex-direction: column; gap: 15px; scrollbar-width: thin;
@@ -75,9 +83,9 @@
       .sent { align-self: flex-end; background: var(--my-msg-bg); color: white; border-bottom-right-radius: 4px; }
       .received { align-self: flex-start; background: var(--other-msg-bg); color: #444; border-bottom-left-radius: 4px; }
       .sender-name { font-size: 10px; font-weight: bold; display: block; margin-bottom: 4px; opacity: 0.8; }
-      .media-content { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+      .media-content { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; }
 
-      /* Input */
+      /* Input Area */
       .input-area {
         padding: 15px; background: rgba(0, 0, 0, 0.2); display: flex; align-items: center; gap: 10px;
       }
@@ -99,29 +107,42 @@
   </head>
   <body>
 
-    <audio id="notifySound" src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" preload="auto"></audio>
+    <audio id="notifySound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
     <div id="login-screen">
       <div class="login-box">
-        <h2>🔒 Secure Chat</h2>
-        <p style="color:#666; margin-bottom:10px;">Room: <b>123 (Fixed)</b></p>
-        <input type="text" id="username" placeholder="Enter Your Name" />
-        <button class="btn" id="joinBtn">Start Chatting</button>
+        <h2>🚀 Global Chat</h2>
+        <p>Secure & Fast Messaging</p>
+        
+        <div class="input-group">
+          <label>YOUR NAME</label>
+          <input type="text" id="username" placeholder="e.g. Rahul" />
+        </div>
+
+        <div class="input-group">
+          <label>ROOM CODE (Optional)</label>
+          <input type="text" id="roomCode" placeholder="Leave empty for Room 123" />
+        </div>
+        
+        <button class="btn" id="joinBtn">Join Chat</button>
       </div>
     </div>
 
     <div class="app-container" id="app">
       <div class="header">
         <div>
-          <h4>Room 123</h4>
-          <small style="opacity: 0.7; font-size: 10px;">🔔 Notifications ON</small>
+          <h4 id="room-display">Room 123</h4>
+          <small style="opacity: 0.7; font-size: 10px;">🟢 Connected</small>
         </div>
-        <button class="logout-btn" id="logoutBtn">Logout</button>
+        <div class="header-controls">
+          <button class="small-btn" id="notifyBtn" onclick="enableNotifications()">🔔 Enable Alerts</button>
+          <button class="small-btn" onclick="location.reload()" style="background:rgba(255,0,0,0.4)">Logout</button>
+        </div>
       </div>
 
       <div class="chat-window" id="chatWindow"></div>
       
-      <div id="file-loading">Uploading large file (Wait)...</div>
+      <div id="file-loading">Uploading large file... Please wait.</div>
 
       <div class="input-area">
         <input type="file" id="fileInput" accept="image/*,video/*" hidden>
@@ -149,12 +170,12 @@
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
 
-      // --- FIXED ROOM CONFIG ---
-      const ROOM_ID = "123"; 
-      let myName = localStorage.getItem("chatUser") || ""; // Auto-load name
-      let chatRef = ref(db, "chats/" + ROOM_ID);
+      // Variables
+      let myName = localStorage.getItem("chatUser") || "";
+      let currentRoom = "123";
+      let chatRef;
 
-      // DOM Elements
+      // UI
       const loginScreen = document.getElementById("login-screen");
       const appDiv = document.getElementById("app");
       const chatWindow = document.getElementById("chatWindow");
@@ -163,40 +184,33 @@
       const loader = document.getElementById("file-loading");
       const notifySound = document.getElementById("notifySound");
 
-      // --- AUTO LOGIN CHECK ---
-      if (myName) {
-        initChat();
-      } else {
-        loginScreen.style.display = "flex";
-      }
+      // Auto-fill name if exists
+      if(myName) document.getElementById("username").value = myName;
 
-      // --- LOGIN BUTTON ---
+      // --- JOIN BUTTON LOGIC ---
       document.getElementById("joinBtn").addEventListener("click", () => {
         const nameIn = document.getElementById("username").value.trim();
-        if (!nameIn) return alert("Name is required");
+        const roomIn = document.getElementById("roomCode").value.trim();
+
+        if (!nameIn) return alert("Name is required!");
 
         myName = nameIn;
-        localStorage.setItem("chatUser", myName); // Save for next time
-        initChat();
+        localStorage.setItem("chatUser", myName);
+
+        // Logic: Empty input = Room 123, otherwise Custom Room
+        currentRoom = roomIn ? roomIn : "123";
+
+        startChat();
       });
 
-      // --- LOGOUT BUTTON ---
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("chatUser");
-        location.reload();
-      });
-
-      // --- INITIALIZE CHAT ---
-      function initChat() {
+      function startChat() {
         loginScreen.style.display = "none";
         appDiv.style.display = "flex";
-        
-        // Request Notification Permission
-        if (Notification.permission !== "granted") {
-          Notification.requestPermission();
-        }
+        document.getElementById("room-display").innerText = `Room: ${currentRoom}`;
 
-        // Listen for messages
+        chatRef = ref(db, "chats/" + currentRoom);
+
+        // Load Messages
         onChildAdded(chatRef, (snapshot) => {
           const data = snapshot.val();
           displayMessage(data);
@@ -204,18 +218,36 @@
         });
       }
 
-      // --- HANDLE NOTIFICATIONS ---
-      function handleNotification(data) {
-        // Only notify if message is NOT from me
-        if (data.user !== myName) {
-            // 1. Play Sound
-            notifySound.currentTime = 0;
-            notifySound.play().catch(e => console.log("Audio play blocked until interaction"));
+      // --- NOTIFICATION & SOUND LOGIC ---
+      // This needs to be global so button can call it
+      window.enableNotifications = function() {
+        // 1. Ask Browser Permission
+        Notification.requestPermission().then(perm => {
+          if (perm === "granted") {
+            const btn = document.getElementById("notifyBtn");
+            btn.innerText = "🔔 Alerts ON";
+            btn.classList.add("notify-active");
+            
+            // 2. Play silent sound to UNLOCK Audio Context
+            notifySound.play().catch(e => console.log("Audio started"));
+          } else {
+            alert("Please allow notifications in your browser settings.");
+          }
+        });
+      };
 
-            // 2. Browser Notification (if tab is hidden/background)
+      function handleNotification(data) {
+        if (data.user !== myName) {
+            // Play Sound
+            try {
+                notifySound.currentTime = 0;
+                notifySound.play().catch(e => console.error("User interaction needed first"));
+            } catch(e) {}
+
+            // Show Popup
             if (document.hidden && Notification.permission === "granted") {
-                new Notification(`New message from ${data.user}`, {
-                    body: data.type === 'text' ? data.text : "Sent a file",
+                new Notification(`New msg in Room ${currentRoom}`, {
+                    body: `${data.user}: ${data.type === 'text' ? data.text : 'Sent a file'}`,
                     icon: "https://cdn-icons-png.flaticon.com/512/1041/1041916.png"
                 });
             }
@@ -241,14 +273,14 @@
         msgInput.value = "";
       }
 
-      // --- SEND FILE (10MB LIMIT) ---
+      // --- FILE UPLOAD (Max ~7-8MB Source File) ---
       fileInput.addEventListener("change", function () {
         const file = this.files[0];
         if (!file) return;
 
-        // 10MB Limit (10 * 1024 * 1024)
-        if (file.size > 10 * 1024 * 1024) {
-          alert("File too big! Max limit is 10MB.");
+        // Check Size: 8MB limit (Base64 increases size by 30%, keeping it safe under Firebase 10MB limit)
+        if (file.size > 8 * 1024 * 1024) {
+          alert("File too large! Please upload files smaller than 8MB.");
           this.value = "";
           return;
         }
@@ -273,12 +305,13 @@
           })
           .catch(err => {
             loader.style.display = "none";
-            alert("Upload failed. Internet might be too slow for this file.");
+            console.error(err);
+            alert("Upload Failed: File might be too complex for the free database.");
           });
         };
       });
 
-      // --- DISPLAY MESSAGE ---
+      // --- DISPLAY UI ---
       function displayMessage(data) {
         const div = document.createElement("div");
         const isMe = data.user === myName;
