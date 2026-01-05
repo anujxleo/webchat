@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Global Premium Chat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Global Chat (Pro Features)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
       /* --- CSS STYLES --- */
       :root {
@@ -21,110 +21,127 @@
         height: 100vh;
         display: flex; justify-content: center; align-items: center; overflow: hidden;
       }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+      
       /* Login Screen */
       #login-screen {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
         z-index: 100; display: flex; justify-content: center; align-items: center;
       }
       .login-box {
-        background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
+        background: white; padding: 35px; border-radius: 20px;
         width: 90%; max-width: 380px; text-align: center;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        animation: fadeIn 0.5s ease;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4);
       }
-      .login-box h2 { color: #333; margin-bottom: 5px; }
-      .login-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
-      
-      .input-group { text-align: left; margin-bottom: 15px; }
-      .input-group label { font-size: 12px; font-weight: bold; color: #555; margin-left: 5px; }
       .login-box input {
-        width: 100%; padding: 14px; margin-top: 5px; border: 2px solid #ddd;
-        border-radius: 12px; background: #f9f9f9; outline: none; transition: 0.3s;
+        width: 100%; padding: 14px; margin-top: 10px; border: 2px solid #ddd;
+        border-radius: 12px; background: #f9f9f9; outline: none;
       }
-      .login-box input:focus { border-color: #764ba2; background: white; }
-      
       .btn {
         width: 100%; padding: 14px; background: var(--primary-gradient);
-        color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
-        margin-top: 10px;
+        color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 15px;
       }
 
-      /* Chat App */
+      /* App Container */
       .app-container {
         width: 100%; max-width: 500px; height: 90vh; background: var(--glass-bg);
         backdrop-filter: blur(16px); border: 1px solid var(--glass-border);
         border-radius: 24px; display: none; flex-direction: column;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative;
       }
       .header {
         background: rgba(255, 255, 255, 0.1); padding: 15px 20px;
         display: flex; align-items: center; justify-content: space-between;
         border-bottom: 1px solid var(--glass-border); color: white;
       }
-      .header-controls { display: flex; gap: 10px; }
       .small-btn {
         background: rgba(0, 0, 0, 0.3); border: none; padding: 6px 12px;
         border-radius: 20px; color: white; cursor: pointer; font-size: 11px;
       }
       .notify-active { background: #00c853 !important; }
 
-      /* Chat Area */
+      /* Chat Window */
       .chat-window {
         flex: 1; overflow-y: auto; padding: 20px; display: flex;
         flex-direction: column; gap: 15px; scrollbar-width: thin;
       }
       .message {
         max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14px;
-        position: relative; word-wrap: break-word; animation: fadeIn 0.4s ease forwards;
+        position: relative; word-wrap: break-word; cursor: pointer;
+        transition: transform 0.1s;
       }
+      .message:active { transform: scale(0.98); }
       .sent { align-self: flex-end; background: var(--my-msg-bg); color: white; border-bottom-right-radius: 4px; }
-      .received { align-self: flex-start; background: var(--other-msg-bg); color: #444; border-bottom-left-radius: 4px; }
+      .received { align-self: flex-start; background: var(--other-msg-bg); color: #333; border-bottom-left-radius: 4px; }
+      
       .sender-name { font-size: 10px; font-weight: bold; display: block; margin-bottom: 4px; opacity: 0.8; }
-      .media-content { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; }
+      .media-content { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+
+      /* Message Meta (Time & Seen) */
+      .msg-meta {
+        display: flex; justify-content: flex-end; align-items: center; gap: 5px;
+        font-size: 10px; margin-top: 5px; opacity: 0.7;
+      }
+      .seen-icon { font-size: 12px; }
+
+      /* Context Menu (Delete/Copy) */
+      #context-menu {
+        position: absolute; display: none; background: white; border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 50; overflow: hidden;
+        min-width: 120px; animation: fadeIn 0.2s;
+      }
+      #context-menu div {
+        padding: 10px 15px; font-size: 13px; color: #333; cursor: pointer; border-bottom: 1px solid #eee;
+      }
+      #context-menu div:hover { background: #f0f0f0; }
+      #context-menu div:last-child { border-bottom: none; }
+      .delete-opt { color: red !important; }
 
       /* Input Area */
       .input-area {
         padding: 15px; background: rgba(0, 0, 0, 0.2); display: flex; align-items: center; gap: 10px;
       }
       .input-box {
-        flex: 1; padding: 14px; border-radius: 30px; border: none; outline: none; background: rgba(255, 255, 255, 0.9);
+        flex: 1; padding: 14px; border-radius: 30px; border: none; outline: none; background: rgba(255, 255, 255, 0.95);
       }
       .icon-btn {
         background: rgba(255, 255, 255, 0.15); color: white; border: none; width: 45px; height: 45px;
         border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 20px;
       }
-      .send-btn { background: var(--primary-gradient); }
       
       #file-loading {
         position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
         background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px;
         font-size: 12px; display: none; z-index: 50;
       }
+
+      /* Seen List Tooltip */
+      .seen-tooltip {
+        visibility: hidden; background-color: black; color: #fff; text-align: center;
+        border-radius: 6px; padding: 5px 10px; position: absolute; z-index: 1;
+        bottom: 100%; left: 50%; margin-left: -60px; font-size: 10px; width: 120px;
+      }
+      .msg-meta:hover .seen-tooltip { visibility: visible; }
+
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
   </head>
   <body>
 
     <audio id="notifySound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
+    <div id="context-menu">
+      <div id="copy-opt">📋 Copy Text</div>
+      <div id="delete-opt" class="delete-opt">🗑️ Delete</div>
+    </div>
+
     <div id="login-screen">
       <div class="login-box">
-        <h2>🚀 Global Chat</h2>
-        <p>Secure & Fast Messaging</p>
-        
-        <div class="input-group">
-          <label>YOUR NAME</label>
-          <input type="text" id="username" placeholder="e.g. Rahul" />
-        </div>
-
-        <div class="input-group">
-          <label>ROOM CODE (Optional)</label>
-          <input type="text" id="roomCode" placeholder="Leave empty for Room 123" />
-        </div>
-        
-        <button class="btn" id="joinBtn">Join Chat</button>
+        <h2>🚀 Ultra Chat</h2>
+        <p style="color:#666; font-size:12px; margin-bottom:20px;">Secure • Delete • Seen Status</p>
+        <input type="text" id="username" placeholder="Your Name" />
+        <input type="text" id="roomCode" placeholder="Room Code (Empty for 123)" />
+        <button class="btn" id="joinBtn">Enter Room</button>
       </div>
     </div>
 
@@ -132,29 +149,29 @@
       <div class="header">
         <div>
           <h4 id="room-display">Room 123</h4>
-          <small style="opacity: 0.7; font-size: 10px;">🟢 Connected</small>
+          <small id="status-text" style="opacity: 0.7; font-size: 10px;">🟢 Live</small>
         </div>
-        <div class="header-controls">
-          <button class="small-btn" id="notifyBtn" onclick="enableNotifications()">🔔 Enable Alerts</button>
-          <button class="small-btn" onclick="location.reload()" style="background:rgba(255,0,0,0.4)">Logout</button>
+        <div style="display:flex; gap:5px;">
+           <button class="small-btn" id="notifyBtn" onclick="enableNotifications()">🔔 Alerts</button>
+           <button class="small-btn" onclick="logout()" style="background:rgba(255,50,50,0.5)">Exit</button>
         </div>
       </div>
 
       <div class="chat-window" id="chatWindow"></div>
       
-      <div id="file-loading">Uploading large file... Please wait.</div>
+      <div id="file-loading">Uploading Media...</div>
 
       <div class="input-area">
         <input type="file" id="fileInput" accept="image/*,video/*" hidden>
         <button class="icon-btn" onclick="document.getElementById('fileInput').click()">📎</button>
-        <input type="text" class="input-box" id="messageInput" placeholder="Type a message..." />
-        <button class="icon-btn send-btn" id="sendBtn">➤</button>
+        <input type="text" class="input-box" id="messageInput" placeholder="Type..." />
+        <button class="icon-btn" style="background: var(--primary-gradient);" id="sendBtn">➤</button>
       </div>
     </div>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-      import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+      import { getDatabase, ref, push, remove, update, onChildAdded, onChildChanged, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyBWbW8qTx06fZcXzY1kUeLhWp3t-qyGGkg",
@@ -170,171 +187,218 @@
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
 
-      // Variables
       let myName = localStorage.getItem("chatUser") || "";
       let currentRoom = "123";
       let chatRef;
 
-      // UI
+      // DOM Elements
       const loginScreen = document.getElementById("login-screen");
       const appDiv = document.getElementById("app");
       const chatWindow = document.getElementById("chatWindow");
       const msgInput = document.getElementById("messageInput");
       const fileInput = document.getElementById("fileInput");
       const loader = document.getElementById("file-loading");
-      const notifySound = document.getElementById("notifySound");
+      const contextMenu = document.getElementById("context-menu");
+      let selectedMsgId = null;
+      let selectedMsgText = "";
+      let selectedMsgUser = "";
 
-      // Auto-fill name if exists
       if(myName) document.getElementById("username").value = myName;
 
-      // --- JOIN BUTTON LOGIC ---
+      // --- JOIN ---
       document.getElementById("joinBtn").addEventListener("click", () => {
         const nameIn = document.getElementById("username").value.trim();
         const roomIn = document.getElementById("roomCode").value.trim();
-
-        if (!nameIn) return alert("Name is required!");
+        if (!nameIn) return alert("Name Required");
 
         myName = nameIn;
         localStorage.setItem("chatUser", myName);
-
-        // Logic: Empty input = Room 123, otherwise Custom Room
         currentRoom = roomIn ? roomIn : "123";
-
         startChat();
       });
+
+      window.logout = function() {
+        localStorage.removeItem("chatUser");
+        location.reload();
+      }
 
       function startChat() {
         loginScreen.style.display = "none";
         appDiv.style.display = "flex";
         document.getElementById("room-display").innerText = `Room: ${currentRoom}`;
-
+        
         chatRef = ref(db, "chats/" + currentRoom);
 
-        // Load Messages
+        // 1. New Message Added
         onChildAdded(chatRef, (snapshot) => {
           const data = snapshot.val();
-          displayMessage(data);
-          handleNotification(data);
-        });
-      }
-
-      // --- NOTIFICATION & SOUND LOGIC ---
-      // This needs to be global so button can call it
-      window.enableNotifications = function() {
-        // 1. Ask Browser Permission
-        Notification.requestPermission().then(perm => {
-          if (perm === "granted") {
-            const btn = document.getElementById("notifyBtn");
-            btn.innerText = "🔔 Alerts ON";
-            btn.classList.add("notify-active");
-            
-            // 2. Play silent sound to UNLOCK Audio Context
-            notifySound.play().catch(e => console.log("Audio started"));
-          } else {
-            alert("Please allow notifications in your browser settings.");
+          const key = snapshot.key;
+          displayMessage(key, data);
+          
+          // Mark as Seen if it's not mine
+          if(data.user !== myName) {
+            updateSeenStatus(key);
+            handleNotification(data);
           }
         });
-      };
 
-      function handleNotification(data) {
-        if (data.user !== myName) {
-            // Play Sound
-            try {
-                notifySound.currentTime = 0;
-                notifySound.play().catch(e => console.error("User interaction needed first"));
-            } catch(e) {}
+        // 2. Message Changed (Seen updated)
+        onChildChanged(chatRef, (snapshot) => {
+            const data = snapshot.val();
+            const key = snapshot.key;
+            updateMessageUI(key, data);
+        });
 
-            // Show Popup
-            if (document.hidden && Notification.permission === "granted") {
-                new Notification(`New msg in Room ${currentRoom}`, {
-                    body: `${data.user}: ${data.type === 'text' ? data.text : 'Sent a file'}`,
-                    icon: "https://cdn-icons-png.flaticon.com/512/1041/1041916.png"
-                });
-            }
-        }
+        // 3. Message Removed
+        onChildRemoved(chatRef, (snapshot) => {
+            const el = document.getElementById(snapshot.key);
+            if(el) el.remove();
+        });
       }
 
-      // --- SEND MESSAGE ---
+      // --- SEEN STATUS UPDATE ---
+      function updateSeenStatus(msgKey) {
+        // We push our name to the 'seenBy' object in Firebase
+        const seenRef = ref(db, `chats/${currentRoom}/${msgKey}/seenBy`);
+        const updateData = {};
+        updateData[myName] = true;
+        update(seenRef, updateData);
+      }
+
+      // --- NOTIFICATIONS ---
+      window.enableNotifications = function() {
+        Notification.requestPermission().then(p => {
+            if(p==="granted") {
+                document.getElementById("notifyBtn").classList.add("notify-active");
+                document.getElementById("notifyBtn").innerText = "🔔 ON";
+                document.getElementById("notifySound").play().catch(()=>{});
+            }
+        });
+      }
+
+      function handleNotification(data) {
+         if(document.hidden && Notification.permission === "granted") {
+             new Notification(`New from ${data.user}`, { body: data.type==='text'?data.text:'Sent a file' });
+         }
+         if(data.user !== myName) {
+             const sound = document.getElementById("notifySound");
+             sound.currentTime=0; sound.play().catch(()=>{});
+         }
+      }
+
+      // --- SENDING ---
       document.getElementById("sendBtn").addEventListener("click", sendMessage);
-      msgInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage();
-      });
+      msgInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
 
       function sendMessage() {
         const text = msgInput.value.trim();
         if (!text) return;
-
-        push(chatRef, {
-          user: myName,
-          text: text,
-          type: 'text',
-          timestamp: Date.now(),
-        });
+        push(chatRef, { user: myName, text: text, type: 'text', timestamp: Date.now() });
         msgInput.value = "";
       }
 
-      // --- FILE UPLOAD (Max ~7-8MB Source File) ---
       fileInput.addEventListener("change", function () {
         const file = this.files[0];
-        if (!file) return;
-
-        // Check Size: 8MB limit (Base64 increases size by 30%, keeping it safe under Firebase 10MB limit)
-        if (file.size > 8 * 1024 * 1024) {
-          alert("File too large! Please upload files smaller than 8MB.");
-          this.value = "";
-          return;
-        }
-
-        loader.style.display = "block"; 
-
+        if (!file || file.size > 8 * 1024 * 1024) return alert("File too large (Max 8MB)");
+        loader.style.display = "block";
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function () {
-          const base64Data = reader.result;
-          const fileType = file.type.startsWith("image") ? "image" : "video";
-
-          push(chatRef, {
-            user: myName,
-            fileData: base64Data,
-            type: fileType,
-            timestamp: Date.now(),
-          })
-          .then(() => {
-            loader.style.display = "none"; 
-            fileInput.value = ""; 
-          })
-          .catch(err => {
-            loader.style.display = "none";
-            console.error(err);
-            alert("Upload Failed: File might be too complex for the free database.");
-          });
+          push(chatRef, { user: myName, fileData: reader.result, type: file.type.startsWith("image") ? "image" : "video", timestamp: Date.now() })
+          .then(() => { loader.style.display = "none"; fileInput.value = ""; });
         };
       });
 
-      // --- DISPLAY UI ---
-      function displayMessage(data) {
+      // --- DISPLAY LOGIC ---
+      function displayMessage(key, data) {
         const div = document.createElement("div");
         const isMe = data.user === myName;
-
+        div.id = key;
         div.className = `message ${isMe ? "sent" : "received"}`;
         
-        let contentHtml = "";
-        if (data.type === 'text') {
-           contentHtml = `<span>${data.text}</span>`;
-        } else if (data.type === 'image') {
-           contentHtml = `<img src="${data.fileData}" class="media-content" alt="Image">`;
-        } else if (data.type === 'video') {
-           contentHtml = `<video src="${data.fileData}" class="media-content" controls></video>`;
-        }
+        // Calculate Seen
+        let seenHTML = getSeenHTML(data.seenBy);
+
+        let content = "";
+        if (data.type === 'text') content = `<span>${data.text}</span>`;
+        else if (data.type === 'image') content = `<img src="${data.fileData}" class="media-content">`;
+        else content = `<video src="${data.fileData}" class="media-content" controls></video>`;
 
         div.innerHTML = `
             <span class="sender-name">${isMe ? "You" : data.user}</span>
-            ${contentHtml}
+            ${content}
+            <div class="msg-meta" id="meta-${key}">
+               ${seenHTML}
+            </div>
         `;
+
+        // Click Event for Options
+        div.addEventListener("click", (e) => showContextMenu(e, key, data));
 
         chatWindow.appendChild(div);
         chatWindow.scrollTop = chatWindow.scrollHeight;
       }
+
+      function updateMessageUI(key, data) {
+        const metaDiv = document.getElementById(`meta-${key}`);
+        if(metaDiv) {
+            metaDiv.innerHTML = getSeenHTML(data.seenBy);
+        }
+      }
+
+      function getSeenHTML(seenObj) {
+        if(!seenObj) return `<span class="seen-icon" style="opacity:0.5">✓ Sent</span>`;
+        const names = Object.keys(seenObj).filter(n => n !== myName); // Don't show my own name
+        if(names.length === 0) return `<span class="seen-icon" style="opacity:0.5">✓ Sent</span>`;
+        
+        return `
+            <span class="seen-icon">👁️ ${names.length}</span>
+            <span class="seen-tooltip">${names.join(", ")}</span>
+        `;
+      }
+
+      // --- CONTEXT MENU (DELETE / COPY) ---
+      function showContextMenu(e, key, data) {
+        e.stopPropagation(); // Stop bubbling
+        selectedMsgId = key;
+        selectedMsgText = data.text || "";
+        selectedMsgUser = data.user;
+
+        // Position Menu
+        contextMenu.style.display = "block";
+        contextMenu.style.left = e.pageX + "px";
+        contextMenu.style.top = e.pageY + "px";
+
+        // Show/Hide Delete Option
+        const delBtn = document.getElementById("delete-opt");
+        if(data.user === myName) delBtn.style.display = "block";
+        else delBtn.style.display = "none";
+      }
+
+      // Hide Menu on click elsewhere
+      document.addEventListener("click", () => { contextMenu.style.display = "none"; });
+
+      // Copy Action
+      document.getElementById("copy-opt").addEventListener("click", () => {
+        if(selectedMsgText) {
+            navigator.clipboard.writeText(selectedMsgText);
+            alert("Text Copied!");
+        } else {
+            alert("Can only copy text messages.");
+        }
+        contextMenu.style.display = "none";
+      });
+
+      // Delete Action
+      document.getElementById("delete-opt").addEventListener("click", () => {
+        if(selectedMsgId && selectedMsgUser === myName) {
+            if(confirm("Delete this message?")) {
+                remove(ref(db, `chats/${currentRoom}/${selectedMsgId}`));
+            }
+        }
+        contextMenu.style.display = "none";
+      });
+
     </script>
   </body>
 </html>
